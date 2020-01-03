@@ -20,7 +20,11 @@ extra-source-files:
 description:         Please see the README on GitHub at <https://github.com/taylandogan/spotto-bot#readme>
 
 dependencies:
+- aeson
+- aeson-lens
 - base >= 4.7 && < 5
+- lens
+- wreq
 
 library:
   source-dirs: src
