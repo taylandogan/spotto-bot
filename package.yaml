@@ -21,11 +21,12 @@ description:         Please see the README on GitHub at <https://github.com/tayl
 
 dependencies:
 - aeson
-- aeson-lens
 - base >= 4.7 && < 5
 - base64-bytestring
 - bytestring
 - lens
+- lens-aeson
+- text
 - wreq
 
 library:
