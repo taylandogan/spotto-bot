@@ -24,8 +24,11 @@ dependencies:
 - base >= 4.7 && < 5
 - base64-bytestring
 - bytestring
+- http-client
+- http-types
 - lens
 - lens-aeson
+- MissingH
 - text
 - wreq
 
