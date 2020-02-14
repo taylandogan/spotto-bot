@@ -30,6 +30,32 @@ import System.Environment (getEnv)
 
 newtype Token = MkToken T.Text deriving (Show)
 
+data Track = Track { track_name :: ! T.Text } deriving (Show, Generic)
+instance FromJSON Track
+instance ToJSON Track
+
+data Tracks = Tracks { tracks_href :: !T.Text
+                    , total :: Int
+                    } deriving (Show, Generic)
+
+instance FromJSON Tracks
+instance ToJSON Tracks
+
+data PlaylistItem =
+    PlaylistItem { description :: !T.Text
+                  , href :: !T.Text
+                  , id :: !T.Text
+                  , name :: !T.Text
+                  , snapshot_id :: !T.Text
+                  , tracks :: Tracks
+                    } deriving (Show, Generic)
+
+instance FromJSON PlaylistItem
+instance ToJSON PlaylistItem
+
+type HTTPIO = ExceptT String IO
+type InfoMsg = String
+
 baseSpotifyUrl :: String
 baseSpotifyUrl = "https://api.spotify.com"
 
