@@ -24,12 +24,16 @@ dependencies:
 - base >= 4.7 && < 5
 - base64-bytestring
 - bytestring
+- exceptions
 - http-client
 - http-types
 - lens
 - lens-aeson
 - MissingH
+- mtl
 - text
+- transformers
+- vector
 - wreq
 
 library:
