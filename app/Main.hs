@@ -12,7 +12,7 @@ import Data.Aeson (toJSON, FromJSON, ToJSON, decode, eitherDecode)
 import Data.Aeson.Lens (key, _String, _Array)
 import Data.Aeson.Types (Value, parseJSON, parseEither, parseMaybe)
 import Data.Either.Utils (maybeToEither)
-import Data.Vector ((!?))
+import Data.Vector (Vector, (!?))
 import qualified Data.ByteString.Lazy as B
 import qualified Data.Text as T
 import qualified Network.Wreq as W
@@ -27,19 +27,17 @@ getToken sess = do
     -- resp <- raiseResponse "Request to get token" resp
     return $ MkToken (resp ^. W.responseBody . key "access_token" . _String)
 
-parsePlaylist :: Maybe Value -> HTTPIO PlaylistItem
-parsePlaylist Nothing = throwError "Cannot parse empty JSON to playlist"
-parsePlaylist (Just val) = case parseEither parseJSON val of
+parsePlaylist :: Value -> HTTPIO PlaylistItem
+parsePlaylist val = case parseEither parseJSON val of
                             Left err -> throwError err
                             Right pl -> return pl
 
-getMyPlaylists :: WS.Session -> Token -> HTTPIO PlaylistItem
+getMyPlaylists :: WS.Session -> Token -> HTTPIO (Vector PlaylistItem)
 getMyPlaylists sess token = do
     let playlistUrl = baseSpotifyUrl ++ "/v1/users/taylandgn/playlists"
-    let opts = addQueryParam "offset" "0" . addQueryParam "limit" "1" . addHeader "Authorization" (getBearerStr token) $ W.defaults
+    let opts = addQueryParam "offset" "0" . addQueryParam "limit" "32" . addHeader "Authorization" (getBearerStr token) $ W.defaults
     resp <- liftIO (WS.getWith opts sess playlistUrl) `catchE` requestHandler
-    parsePlaylist $ (resp ^. W.responseBody . key "items" . _Array) !? 0
-    -- TODO: Adapt the code to work on the whole array at once (mapM parsePlaylist ..)
+    mapM parsePlaylist (resp ^. W.responseBody . key "items" . _Array)
 
 main :: IO ()
 main = do
