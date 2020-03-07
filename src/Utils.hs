@@ -1,6 +1,7 @@
 module Utils
     ( baseSpotifyUrl,
       accountsUrl,
+      tracksUrl,
       tokenUrl,
       getAuthHeader,
       getBearerStr,
@@ -10,6 +11,7 @@ module Utils
     ) where
 
 import Model
+import Playlist
 
 import Control.Lens
 import Control.Monad.Trans.Except
@@ -30,6 +32,9 @@ baseSpotifyUrl = "https://api.spotify.com"
 
 accountsUrl :: String
 accountsUrl = "https://accounts.spotify.com"
+
+tracksUrl :: Playlist -> String
+tracksUrl pl = baseSpotifyUrl ++ "/v1/playlists/" ++ (T.unpack . Playlist.id $ pl) ++ "/tracks"
 
 tokenUrl :: String
 tokenUrl = accountsUrl ++ "/api/token"
