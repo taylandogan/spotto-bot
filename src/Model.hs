@@ -2,7 +2,7 @@
 
 module Model
     ( Token (..),
-      PlaylistItem,
+      Playlist,
       HTTPIO,
       InfoMsg
     ) where
@@ -16,12 +16,12 @@ type InfoMsg = String
 type HTTPIO = ExceptT String IO
 newtype Token = MkToken Text deriving (Show)
 
-data PlaylistItem =
-    PlaylistItem { description :: !Text
+data Playlist =
+    Playlist { description :: !Text
                   , href :: !Text
                   , id :: !Text
                   , name :: !Text
                   , snapshot_id :: !Text
                    } deriving (Show, Generic)
-instance FromJSON PlaylistItem
-instance ToJSON PlaylistItem
+instance FromJSON Playlist
+instance ToJSON Playlist

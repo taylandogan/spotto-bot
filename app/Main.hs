@@ -30,12 +30,12 @@ getToken sess = do
     -- resp <- raiseResponse "Request to get token" resp
     return $ MkToken (resp ^. W.responseBody . key "access_token" . _String)
 
-parsePlaylist :: Value -> HTTPIO PlaylistItem
+parsePlaylist :: Value -> HTTPIO Playlist
 parsePlaylist val = case parseEither parseJSON val of
                             Left err -> throwError err
                             Right playlist -> return playlist
 
-getPlaylists :: Int -> Int -> String -> WS.Session -> Token -> HTTPIO (Vector PlaylistItem)
+getPlaylists :: Int -> Int -> String -> WS.Session -> Token -> HTTPIO (Vector Playlist)
 getPlaylists offset limit username sess token = do
     let offsetTxt = T.pack . show $ offset
     let limitTxt = T.pack . show $ limit
@@ -45,7 +45,7 @@ getPlaylists offset limit username sess token = do
     mapM parsePlaylist (resp ^. W.responseBody . key "items" . _Array)
 
 -- TODO: Do this until you get a empty list (but like who has 250 playlist?)
-collectPlaylists :: String -> WS.Session -> Token -> HTTPIO (Vector PlaylistItem)
+collectPlaylists :: String -> WS.Session -> Token -> HTTPIO (Vector Playlist)
 collectPlaylists username sess token = Data.Vector.concat <$> traverse (\offset-> getPlaylists offset 50 username sess token) [0..5]
 
 main :: IO ()
