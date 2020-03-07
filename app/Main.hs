@@ -3,6 +3,7 @@
 module Main where
 
 import Model
+import Playlist
 import Utils
 
 import Control.Lens
