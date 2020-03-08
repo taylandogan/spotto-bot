@@ -25,6 +25,7 @@ dependencies:
 - base64-bytestring
 - bytestring
 - cassava
+- directory
 - exceptions
 - http-client
 - http-types

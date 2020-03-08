@@ -10,7 +10,7 @@ module Artist
 import Data.Aeson (FromJSON, ToJSON)
 import Data.ByteString.Char8 as B
 import qualified Data.ByteString.Char8 as B8
-import Data.Csv --(FromRecord, ToRecord, FromField, ToField, parseField, toField, encode, decode)
+import Data.Csv (FromNamedRecord, ToNamedRecord, FromField, ToField, parseField, toField)
 import Data.List as L
 import Data.List.Split as TS
 import Data.Text as T
@@ -23,14 +23,8 @@ data Artist =
             } deriving (Show, Generic)
 instance FromJSON Artist
 instance ToJSON Artist
-instance FromRecord Artist
-instance ToRecord Artist
-
-instance FromField Artist where
-    parseField a = pure $ Artist{id = "", name = decodeUtf8 a}
-
-instance ToField Artist where
-    toField = encodeUtf8 . name
+instance FromNamedRecord Artist where
+instance ToNamedRecord Artist
 
 instance FromField [Artist] where
     parseField aList = pure $ (\a -> Artist{id = "", name = T.pack a}) <$> aNames

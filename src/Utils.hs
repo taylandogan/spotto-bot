@@ -1,20 +1,23 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Utils
-    ( baseSpotifyUrl,
-      accountsUrl,
-      tracksUrl,
-      tokenUrl,
+    ( getToken,
       getAuthHeader,
       getBearerStr,
       addHeader,
       addQueryParam,
-      requestHandler
+      requestHandler,
+      optsLimitOffset
     ) where
 
+import Const
 import Model
 import Playlist
 
 import Control.Lens
+import Control.Monad.Except (liftIO)
 import Control.Monad.Trans.Except
+import Data.Aeson.Lens (key, _String)
 import Data.ByteString.Base64 (encode)
 import Data.Text.Encoding (encodeUtf8)
 import System.Environment (getEnv)
@@ -24,20 +27,17 @@ import qualified Data.ByteString.Lazy.Internal as LBS
 import qualified Network.HTTP.Types.Header as HH
 import qualified Network.Wreq.Types as WT
 import qualified Network.Wreq as W
+import qualified Network.Wreq.Session as WS
 import qualified Network.HTTP.Client as CL
 
 
-baseSpotifyUrl :: String
-baseSpotifyUrl = "https://api.spotify.com"
 
-accountsUrl :: String
-accountsUrl = "https://accounts.spotify.com"
-
-tracksUrl :: Playlist -> String
-tracksUrl pl = baseSpotifyUrl ++ "/v1/playlists/" ++ (T.unpack . Playlist.id $ pl) ++ "/tracks"
-
-tokenUrl :: String
-tokenUrl = accountsUrl ++ "/api/token"
+getToken :: WS.Session -> HTTPIO Token
+getToken sess = do
+    authHeader <- liftIO getAuthHeader
+    let opts = addHeader "Authorization" authHeader W.defaults
+    resp <- liftIO (WS.postWith opts sess tokenUrl ["grant_type" W.:= ("client_credentials" :: String)]) `catchE` requestHandler
+    return $ MkToken (resp ^. W.responseBody . key "access_token" . _String)
 
 getAuthHeader :: IO T.Text
 getAuthHeader = do
@@ -59,11 +59,11 @@ requestHandler :: CL.HttpException -> HTTPIO (W.Response LBS.ByteString)
 requestHandler (CL.HttpExceptionRequest _ exceptionContent) = throwE . show $ exceptionContent
 requestHandler (CL.InvalidUrlException url _) = throwE $ "Invalid url: " ++ url
 
--- raiseResponse :: InfoMsg -> Response LBS.ByteString-> HTTPIO (Response LBS.ByteString)
--- raiseResponse info r = do
---     let status = r ^. W.responseStatus
---     let statusCode = status ^. W.statusCode
---     let statusMsg = show $ status ^. W.statusMessage
---     case statusCode of
---         200 -> return r
---         _ -> throwE $ info ++ " : FAILED with status: " ++ show statusCode ++ " " ++ statusMsg
+optsLimitOffset :: Int -> Int -> Token -> W.Options
+optsLimitOffset limit offset token =
+  let offsetTxt = intToText offset in
+  let limitTxt = intToText limit in
+  addQueryParam "offset" offsetTxt . addQueryParam "limit" limitTxt . addHeader "Authorization" (getBearerStr token) $ W.defaults
+
+intToText :: Int -> T.Text
+intToText = T.pack . show

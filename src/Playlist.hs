@@ -2,7 +2,7 @@
 {-# LANGUAGE DuplicateRecordFields #-}
 
 module Playlist
-    ( Playlist (id),
+    ( Playlist (id, name),
     ) where
 
 import Data.Aeson (FromJSON, ToJSON)
