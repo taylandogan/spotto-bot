@@ -13,8 +13,14 @@ The resulting **PLAYLIST_NAME**.csv file will have the following structure:
 
 ## How to run the script
 
-Run the following commands:
+- Go to Spotify Developers Dashboard
+- Create an app
+- Get your CLIENT_ID and CLIENT_SECRET.
 
+##### Then run the following commands:
+
+- export **SPOTIFY_APP_ID**=[YOUR_APP_ID]
+- export **SPOTIFY_APP_SECRET**=[YOUR_APP_SECRET]
 - **stack build**
 - **stack exec spotto-bot-exe**
 

@@ -66,8 +66,6 @@ dumpToFile (pl, vTracks) = do
     currentDir <- getCurrentDirectory
     withCurrentDirectory currentDir $ B.writeFile fileName (LB.toStrict . encodeByNameWith csvOptions trackHeader $ toList vTracks)
 
--- TODO: Remove duplicate items in vectors for both playlists and tracks
--- TODO: Concurrently create .csv files for each playlist
 main :: IO ()
 main = join . fmap (either print print) $ runExceptT $ do
     sess <- liftIO WS.newAPISession
