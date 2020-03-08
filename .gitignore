@@ -1,4 +1,4 @@
 .stack-work/
-*.csv
+# *.csv
 spotto-bot.cabal
 *~
