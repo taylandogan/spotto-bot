@@ -52,7 +52,7 @@ getTracksOfPlaylist offset limit playlist sess token = do
 
 -- TODO: Do this until you get a empty list (but like who has 250 playlist?)
 collectPlaylists :: String -> WS.Session -> Token -> HTTPIO (Vector Playlist)
-collectPlaylists username sess token = Data.Vector.concat <$> traverse (\offset-> getPlaylists offset 50 username sess token) [0..5]
+collectPlaylists username sess token = Data.Vector.concat <$> traverse (\offset-> getPlaylists offset 50 username sess token) ((50*) <$> [0..5])
 
 -- TODO: Do this until you get a empty list (but like who has 1000 songs in a playlist?)
 collectTracks :: WS.Session -> Token -> Playlist -> HTTPIO (Vector Track)
