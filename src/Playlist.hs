@@ -6,7 +6,8 @@ module Playlist
     ) where
 
 import Data.Aeson (FromJSON, ToJSON)
-import Data.Text
+import Data.Csv (FromRecord, ToRecord)
+import Data.Text (Text)
 import GHC.Generics
 
 data Playlist =
@@ -19,3 +20,5 @@ data Playlist =
 
 instance FromJSON Playlist
 instance ToJSON Playlist
+instance FromRecord Playlist
+instance ToRecord Playlist

@@ -24,6 +24,7 @@ dependencies:
 - base >= 4.7 && < 5
 - base64-bytestring
 - bytestring
+- cassava
 - exceptions
 - http-client
 - http-types
@@ -31,6 +32,7 @@ dependencies:
 - lens-aeson
 - MissingH
 - mtl
+- split
 - text
 - transformers
 - vector
