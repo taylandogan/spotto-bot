@@ -35,8 +35,8 @@ parseTrack val = case parseEither parseJSON val of
                         Left err -> throwError err
                         Right tr -> return . track $ tr
 
-getPlaylists :: Int -> Int -> String -> WS.Session -> Token -> HTTPIO (Vector Playlist)
-getPlaylists offset limit username sess token = do
+getPlaylists :: Int -> Int -> WS.Session -> Token -> HTTPIO (Vector Playlist)
+getPlaylists offset limit sess token = do
     let opts = optsLimitOffset limit offset token
     liftIO $ threadDelay halfSecondInMicroseconds -- due to rate-limiting
     resp <- liftIO (WS.getWith opts sess playlistUrl) `catchE` requestHandler
@@ -51,8 +51,8 @@ getTracksOfPlaylist offset limit playlist sess token = do
     mapM parseTrack (resp ^. W.responseBody . key "items" . _Array)
 
 -- TODO: Do this until you get a empty list (but like who has 250 playlist?)
-collectPlaylists :: String -> WS.Session -> Token -> HTTPIO (Vector Playlist)
-collectPlaylists username sess token = Data.Vector.concat <$> traverse (\offset-> getPlaylists offset 50 username sess token) ((50*) <$> [0..5])
+collectPlaylists :: WS.Session -> Token -> HTTPIO (Vector Playlist)
+collectPlaylists sess token = Data.Vector.concat <$> traverse (\offset-> getPlaylists offset 50 sess token) ((50*) <$> [0..5])
 
 -- TODO: Do this until you get a empty list (but like who has 1000 songs in a playlist?)
 collectTracks :: WS.Session -> Token -> Playlist -> HTTPIO (Vector Track)
@@ -71,7 +71,7 @@ main = join . fmap (either print print) $ runExceptT $ do
     sess <- liftIO WS.newAPISession
     token <- getToken sess
     liftIO $ print "Retrieving your playlists.."
-    playlists <- collectPlaylists username sess token
+    playlists <- collectPlaylists sess token
     liftIO $ print $ "Retrieved " ++ (show . Data.Vector.length $ playlists) ++ " playlists."
     liftIO $ print "Retrieving your tracks.."
     tracks <- mapM (collectTracks sess token) playlists
