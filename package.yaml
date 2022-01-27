@@ -1,14 +1,14 @@
-name:                spotto-bot
-version:             0.1.0.0
-github:              "taylandogan/spotto-bot"
-license:             BSD3
-author:              "Taylan Dogan"
-maintainer:          "ttaylan.dogann@gmail.com"
-copyright:           "2020 Taylan Dogan"
+name: spotto-bot
+version: 0.1.0.0
+github: "taylandogan/spotto-bot"
+license: BSD3
+author: "Taylan Dogan"
+maintainer: "ttaylan.dogann@gmail.com"
+copyright: "2020 Taylan Dogan"
 
 extra-source-files:
-- README.md
-- ChangeLog.md
+  - README.md
+  - ChangeLog.md
 
 # Metadata used when publishing your package
 # synopsis:            Short description of your package
@@ -17,49 +17,50 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/taylandogan/spotto-bot#readme>
+description: Please see the README on GitHub at <https://github.com/taylandogan/spotto-bot#readme>
 
 dependencies:
-- aeson
-- base >= 4.7 && < 5
-- base64-bytestring
-- bytestring
-- cassava
-- directory
-- exceptions
-- http-client
-- http-types
-- lens
-- lens-aeson
-- MissingH
-- mtl
-- split
-- text
-- transformers
-- vector
-- wreq
+  - aeson
+  - base >= 4.7 && < 5
+  - base64-bytestring
+  - bytestring
+  - cassava
+  - directory
+  - exceptions
+  - filepath
+  - http-client
+  - http-types
+  - lens
+  - lens-aeson
+  - MissingH
+  - mtl
+  - split
+  - text
+  - transformers
+  - vector
+  - wreq
 
 library:
   source-dirs: src
 
 executables:
   spotto-bot-exe:
-    main:                Main.hs
-    source-dirs:         app
+    main: Main.hs
+    source-dirs: app
     ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
     dependencies:
-    - spotto-bot
+      - spotto-bot
 
 tests:
   spotto-bot-test:
-    main:                Spec.hs
-    source-dirs:         test
+    main: Spec.hs
+    source-dirs: test
     ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
     dependencies:
-    - spotto-bot
+      - spotto-bot

@@ -23,6 +23,7 @@ import qualified Data.Text as T
 import qualified Network.Wreq as W
 import qualified Network.Wreq.Session as WS
 import System.Directory
+import System.FilePath ((</>))
 
 
 parsePlaylist :: Value -> HTTPIO Playlist
@@ -60,11 +61,14 @@ collectTracks sess token pl = Data.Vector.concat <$> traverse (\offset -> getTra
 
 dumpToFile :: (Playlist, Vector Track) -> IO ()
 dumpToFile (pl, vTracks) = do
-    let fileName = (T.unpack . name $ pl) ++ ".csv"
+    let replaceSlash = Prelude.map (\c -> if c =='/' then '-'; else c)
+    let fileName = replaceSlash $ (T.unpack . name $ pl) ++ ".csv"
     let csvOptions = defaultEncodeOptions {encIncludeHeader = True}
     print $ "Exporting.. " ++ fileName
     currentDir <- getCurrentDirectory
-    withCurrentDirectory currentDir $ B.writeFile fileName (LB.toStrict . encodeByNameWith csvOptions trackHeader $ toList vTracks)
+    let playlistDir = currentDir </> "playlists"
+    createDirectoryIfMissing True playlistDir
+    withCurrentDirectory playlistDir $ B.writeFile fileName (LB.toStrict . encodeByNameWith csvOptions trackHeader $ toList vTracks)
 
 main :: IO ()
 main = join . fmap (either print print) $ runExceptT $ do
